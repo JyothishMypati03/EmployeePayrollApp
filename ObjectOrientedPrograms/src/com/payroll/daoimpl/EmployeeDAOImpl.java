@@ -27,4 +27,15 @@ public class EmployeeDAOImpl implements EmployeeDAO {
         }
         return null;
     }
+
+    @Override
+    public Employee findByUsername(String username) {
+        if (username == null) return null;
+        for (Employee employee : employees) {
+            if (employee.getAccount() != null && username.equals(employee.getAccount().getUsername())) {
+                return employee;
+            }
+        }
+        return null;
+    }
 }

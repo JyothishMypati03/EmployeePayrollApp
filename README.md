@@ -1,165 +1,252 @@
-# 👨‍💼 Employee Payroll Management System – UC1: Employee Registration
+# 🔐 Employee Payroll Management System – UC2: Employee Authentication & Login
 
 ## 📖 Overview
 
-**Use Case 1 (UC1)** focuses on implementing the **Employee Registration** module of the Employee Payroll Management System. The objective is to register a new employee by validating the input data, creating the required objects, and storing the employee information.
+**Use Case 2 (UC2)** implements the Employee Authentication and Login module of the Employee Payroll Management System.
 
-This use case introduces the fundamental Object-Oriented Programming (OOP) concepts used throughout the project.
+This module extends the Employee Registration use case by introducing user authentication, role-based access, password hashing, inheritance, polymorphism, abstract classes, and session management.
 
 ---
 
 ## 🎯 Goal
 
-Register a new employee with validated personal and salary information.
+Securely authenticate registered users and provide role-based dashboard access.
 
 ---
 
 ## 📌 Learning Objectives
 
-- Understand how multiple classes work together.
-- Learn object creation and interaction.
-- Apply core OOP principles in a real-world scenario.
-- Separate validation logic from business logic.
-- Build a modular and maintainable application.
+- Understand Inheritance and Polymorphism.
+- Learn how Abstract Classes are used.
+- Understand Method Overriding.
+- Introduce Password Hashing.
+- Learn Session Management.
+- Understand Runtime Polymorphism.
 
 ---
 
-## 🛠️ Features
+## 🛠 Features
 
-- Register a new employee
-- Validate Email Address
-- Validate Phone Number
-- Validate Employee ID
-- Create User Account
-- Generate Unique Employee Information
-- Display Registration Confirmation
-
----
-
-## 📚 OOP Concepts Covered
-
-### ✅ Encapsulation
-- Private data members
-- Public getters and setters
-- Controlled access to employee information
-
-### ✅ Constructor Overloading
-- Multiple constructors for flexible object creation
-
-### ✅ Composition
-- An Employee **HAS-A** UserAccount
-
-### ✅ Method Overriding
-- Override `toString()` for formatted employee details
-
-### ✅ Regular Expressions (RegEx)
-- Email validation
-- Phone number validation
-- Employee ID validation
-
-### ✅ Exception Handling
-- Custom `ValidationException`
-- User-friendly error messages
+- Secure User Login
+- Password Hashing
+- Username & Password Authentication
+- Role-Based Login
+- Employee Dashboard
+- Manager Dashboard
+- Session Creation
+- Session Validation
+- Login Attempt Limiting
 
 ---
 
-## 📂 Project Structure
+# 📚 OOP Concepts Covered
 
-```text
-src/
-│
-├── exception
-│   └── ValidationException.java
-│
-├── validation
-│   └── Validator.java
-│
-├── model
-│   ├── Employee.java
-│   └── UserAccount.java
-│
-├── dao
-│   └── EmployeeDAO.java
-│
-├── daoimpl
-│   └── EmployeeDAOImpl.java
-│
-└── main
-    └── PayrollApplication.java
+## ✅ Inheritance
+
+```
+            User (Abstract)
+             /         \
+            /           \
+RegularEmployee      Manager
+```
+
+Both user types inherit common properties from the abstract `User` class.
+
+---
+
+## ✅ Abstraction
+
+The `User` class defines the common structure while forcing subclasses to implement their own authentication logic.
+
+---
+
+## ✅ Polymorphism
+
+Different objects (`RegularEmployee`, `Manager`) are stored using the parent `User` reference.
+
+```java
+User employee = new RegularEmployee(...);
+
+User manager = new Manager(...);
+```
+
+At runtime, the correct `authenticate()` method is executed.
+
+---
+
+## ✅ Method Overriding
+
+Each subclass provides its own implementation of:
+
+```java
+authenticate()
 ```
 
 ---
 
-## 🔄 Registration Flow
+## ✅ Password Hashing
 
-```text
+Passwords are converted into hashed values before comparison.
+
+```
+Password
+    │
+    ▼
+Hash
+    │
+    ▼
+Stored Securely
+```
+
+---
+
+## ✅ Session Management
+
+After successful login, a session object is created.
+
+The session stores:
+
+- Username
+- Login Time
+- Session Timeout
+
+---
+
+# 📂 Project Structure
+
+```
+src/
+
+│
+├── model
+│      User.java
+│      RegularEmployee.java
+│      Manager.java
+│      Session.java
+│
+├── service
+│      AuthenticationService.java
+│
+├── utility
+│      PasswordUtil.java
+│
+└── main
+       UseCase2LoginApp.java
+```
+
+---
+
+# 🔄 Authentication Flow
+
+```
 Start
    │
    ▼
-Enter Employee Details
+Enter Username
    │
    ▼
-Validate Email
+Enter Password
    │
    ▼
-Validate Phone Number
+Hash Password
    │
    ▼
-Validate Employee ID
+Authenticate User
    │
    ▼
-Create UserAccount Object
+Identify User Role
    │
    ▼
-Create Employee Object
+Create Session
    │
    ▼
-Save Employee
+Display Dashboard
    │
    ▼
-Registration Successful
+End
 ```
 
 ---
 
-## 🖥️ Sample Output
+# 🖥 Sample Output
 
-```text
-========== Employee Registration ==========
+```
+==== USE CASE 2: EMPLOYEE AUTHENTICATION & LOGIN ====
 
-Enter Employee ID : EMP-1001
-Enter Name        : Jyothish Mypati
-Enter Email       : jyothish@gmail.com
-Enter Phone       : 9876543210
-Enter Department  : IT
-Enter Designation : Java Developer
-Enter Salary      : 55000
+Enter Username : emp1
 
-Create Login
+Enter Password : Emp@1234
 
-Username : jyothish
-Password : ********
+Login Successful!
 
------------------------------------------
-Employee Registered Successfully
------------------------------------------
+Role : EMPLOYEE
 
-Employee ID : EMP-1001
-Name        : Jyothish Mypati
-Department  : IT
-Designation : Java Developer
-Email       : jyothish@gmail.com
-Phone       : 9876543210
-Salary      : 55000.0
+======== DASHBOARD ========
+
+Employee Dashboard
+
+View Payslip
+
+Update Profile
+
+Session active for user : emp1
+
+Session active and valid.
 ```
 
 ---
 
-## ❌ Validation Rules
+# 🔑 Class Responsibilities
 
-| Field | Rule |
-|--------|------|
-| Email | Must follow a valid email format |
-| Phone | Must contain exactly 10 digits and start with 6, 7, 8, or 9 |
-| Employee ID | Format: `EMP-XXXX` (e.g., EMP-1001) |
-nagement System** to practice Java Object-Oriented Programming concepts through real-world use cases.
+## PasswordUtil
+
+- Hash passwords
+- Compare password hashes
+
+---
+
+## User (Abstract)
+
+- Stores common user information
+- Defines abstract `authenticate()` method
+
+---
+
+## RegularEmployee
+
+- Extends User
+- Implements employee authentication
+
+---
+
+## Manager
+
+- Extends User
+- Implements manager authentication
+
+---
+
+## Session
+
+- Represents logged-in user
+- Maintains login state
+- Validates session timeout
+
+---
+
+## AuthenticationService
+
+- Handles login
+- Validates credentials
+- Creates sessions
+- Displays role-based dashboard
+
+---
+
+## UseCase2LoginApp
+
+- Entry point
+- Coordinates login flow
+- Calls AuthenticationService
+
+---
