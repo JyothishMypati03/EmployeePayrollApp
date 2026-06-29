@@ -1,161 +1,127 @@
-# 💰Payslip Generation
+# 📄  Payslip Print / Download
 
 ## 📖 Overview
 
-**Use Case 3 (UC3)** implements the **Payslip Generation** module of the Employee Payroll Management System.
+**Use Case 4 (UC4)** implements the **Payslip Print / Download** module of the Employee Payroll Management System.
 
-This use case calculates an employee's monthly salary by combining salary components, applying statutory deductions, and generating a professional payslip. It demonstrates how object-oriented design can simplify payroll processing through reusable components and clean class relationships.
+This module allows an authenticated employee to generate a downloadable copy of a monthly payslip while preserving the original payslip object. The application creates a separate payslip copy, generates a unique filename, and saves it using Java File I/O.
 
 ---
 
 ## 🎯 Goal
 
-Generate a detailed monthly payslip with salary components, deductions, and net payable salary.
+Generate a downloadable copy of an employee's monthly payslip without modifying the original payslip.
 
 ---
 
-## 📌 Learning Objectives
+## 👥 Actors
 
-- Understand Composition and Aggregation.
-- Learn how multiple objects collaborate.
-- Apply Java Stream API for salary calculations.
-- Use the Fluent Interface Design Pattern.
-- Override `toString()` for formatted payslip output.
+- Authenticated Employee (Primary)
+- FileService (Secondary)
+
+---
+
+## 🔄 Flow
+
+```
+Generate Payslip
+        │
+        ▼
+Clone Payslip Object
+        │
+        ▼
+Validate Payslip
+        │
+        ▼
+Generate Unique File Name
+        │
+        ▼
+Save Payslip (Text/PDF)
+        │
+        ▼
+Print Confirmation
+```
 
 ---
 
 ## 🛠 Features
 
-- Generate Monthly Payslip
-- Calculate Gross Salary
-- Apply PF Deduction
-- Apply Tax Deduction
-- Calculate Net Salary
-- Support Multiple Salary Structures
-- Display Professional Payslip
-- Maintain Historical Payslip Records
+- Generate Downloadable Payslip
+- Create Independent Payslip Copy
+- Clone Payslip Object
+- Compare Payslip Objects
+- Generate Unique File Names
+- Save Payslip as Text File
+- Support PDF Download (Future Enhancement)
+- Print Download Confirmation
 
 ---
 
 # 📚 OOP Concepts Covered
 
-## ✅ Composition
+## ✅ equals()
 
-A **Payslip HAS-A SalaryComponents**.
-
-```
-Payslip
-   │
-   ├── Basic Salary
-   ├── HRA
-   ├── DA
-   ├── Bonus
-   └── Allowances
-```
+Compares two payslip objects based on their business data instead of memory addresses.
 
 ---
 
-## ✅ Aggregation
+## ✅ hashCode()
 
-A **Payslip HAS-A Employee**.
-
-```
-Employee
-      ▲
-      │
-  Payslip
-```
-
-The Employee exists independently of the Payslip.
+Generates a hash value consistent with `equals()` to support proper object comparison and collections.
 
 ---
 
-## ✅ Stream API
+## ✅ Cloning
 
-Used for:
+Creates an independent copy of the payslip object.
 
-- Calculating Gross Salary
-- Summing Salary Components
-- Processing Collections
-
-Example operations:
-
-- map()
-- filter()
-- reduce()
-- sum()
+- Shallow Copy
+- Deep Copy (concept)
 
 ---
 
-## ✅ Fluent Interface
+## ✅ Immutable Objects
 
-Supports chained method calls.
+Downloaded payslip copy should not modify the original object.
 
-Example:
+---
 
-```java
-Payslip payslip = new Payslip()
-        .setEmployee(employee)
-        .setMonth("June")
-        .calculateSalary();
-```
+## ✅ File I/O
+
+Uses Java File I/O classes to save the generated payslip into a file.
 
 ---
 
 ## ✅ Method Overriding
 
-Override `toString()` to generate a formatted payslip.
+Override:
+
+- `toString()`
+- `equals()`
+- `hashCode()`
+- `clone()`
 
 ---
 
 # 📂 Project Structure
 
 ```
-src/
-
+EmployeePayrollApp
 │
 ├── model
-│      Employee.java
-│      SalaryComponent.java
-│      Payslip.java
+│     ├── Employee.java
+│     ├── Payslip.java
+│     └── FinalPayslip.java
 │
 ├── service
-│      PayrollService.java
+│     ├── PayrollService.java
+│     └── FileService.java
+│
+├── utility
+│     └── FileUtility.java
 │
 └── main
-       UseCase3PayslipApp.java
-```
-
----
-
-# 🔄 Payslip Generation Flow
-
-```
-Start
-   │
-   ▼
-Select Employee
-   │
-   ▼
-Select Month
-   │
-   ▼
-Load Salary Components
-   │
-   ▼
-Calculate Gross Salary
-   │
-   ▼
-Apply PF & Tax
-   │
-   ▼
-Calculate Net Salary
-   │
-   ▼
-Generate Payslip
-   │
-   ▼
-Display Payslip
+      UseCase4Application.java
 ```
 
 ---
@@ -163,32 +129,45 @@ Display Payslip
 # 🖥 Sample Output
 
 ```
-=========== MONTHLY PAYSLIP ===========
+===============================
+        MONTHLY PAYSLIP
+===============================
 
-Employee ID : EMP-1001
+Employee ID : EMP101
 Employee    : Jyothish Mypati
 Department  : IT
+
 Month       : June 2026
 
----------------------------------------
+--------------------------------
 
-Basic Salary     : ₹50,000.00
-HRA              : ₹10,000.00
-DA               : ₹5,000.00
-Bonus            : ₹2,000.00
+Basic Salary : ₹50,000.00
+HRA          : ₹10,000.00
+DA           : ₹5,000.00
 
----------------------------------------
+Gross Salary : ₹65,000.00
 
-Gross Salary     : ₹67,000.00
+PF           : ₹3,000.00
+Tax          : ₹2,000.00
 
-PF Deduction     : ₹3,000.00
-Tax Deduction    : ₹2,000.00
+--------------------------------
 
----------------------------------------
+Net Salary   : ₹60,000.00
 
-Net Salary       : ₹62,000.00
+===============================
 
-=======================================
+Save Payslip? (y/n): y
+
+Generating Download Copy...
+
+Clone Created Successfully.
+
+Payslip Saved Successfully.
+
+File Name:
+Payslip_EMP101_1751276543210.txt
+
+Download Completed.
 ```
 
 ---
@@ -201,32 +180,55 @@ Net Salary       : ₹62,000.00
 
 ---
 
-## SalaryComponent
+## Payslip
 
-- Represents individual salary components.
-- Basic Salary
-- HRA
-- DA
-- Bonus
-- Allowances
+- Stores salary details.
+- Calculates gross and net salary.
+- Generates formatted payslip.
 
 ---
 
-## Payslip
+## FinalPayslip
 
-- Holds employee details.
-- Contains salary components.
-- Calculates gross salary.
-- Calculates deductions.
-- Calculates net salary.
-- Generates formatted payslip.
+- Represents the downloadable payslip.
+- Overrides `equals()`
+- Overrides `hashCode()`
+- Supports cloning.
 
 ---
 
 ## PayrollService
 
-- Generates payslip.
-- Applies payroll rules.
-- Calculates deductions.
-- Returns completed Payslip object.
+- Generates employee payslip.
+- Sends payslip to FileService.
 
+---
+
+## FileService
+
+- Generates unique filenames.
+- Saves payslip as a text file.
+- Handles file operations.
+
+---
+
+## UseCase4Application
+
+- Displays payslip.
+- Accepts user choice.
+- Creates downloadable copy.
+- Saves the payslip.
+
+---
+
+# 📖 Key Benefits
+
+- Data safety (original object remains unchanged)
+- Independent downloadable payslip copy
+- Proper object comparison using `equals()` and `hashCode()`
+- Professional unique file naming
+- Easy file storage using Java File I/O
+- Extendable to PDF generation
+- Version-control friendly design
+
+---
