@@ -4,9 +4,12 @@ import com.payroll.dao.EmployeeDAO;
 import com.payroll.daoimpl.EmployeeDAOImpl;
 import com.payroll.exception.ValidationException;
 import com.payroll.model.Employee;
+import com.payroll.model.FinalPayslip;
 import com.payroll.model.Payslip;
 import com.payroll.model.SalaryComponents;
 import com.payroll.model.UserAccount;
+import com.payroll.service.SimpleDownloadToken;
+import com.payroll.service.SimpleFileService;
 import com.payroll.validation.Validator;
 import com.payroll.auth.PasswordUtil;
 import com.payroll.auth.AuthenticationService;
@@ -154,6 +157,33 @@ public class PayrollApplication {
         Payslip payslip = new Payslip(employee, components, month);
 
         System.out.println(payslip.toString());
+        System.out.println("\n=== USE CASE 4: PAYSLIP PRINT / DOWNLOAD ===");
+
+        FinalPayslip original = new FinalPayslip(employee.getEmployeeId(), employee.getName(), month, components.getNetPay());
+        FinalPayslip cloned = (FinalPayslip) original.clone();
+
+        System.out.println("\nVerified: Download copy is " + (original.equals(cloned) ? "equal to" : "different from") + " original.");
+        System.out.println("Original hashcode : " + original.hashCode());
+        System.out.println("Cloned   hashcode : " + cloned.hashCode());
+
+        SimpleDownloadToken token = new SimpleDownloadToken();
+        if (token.isExpired()) {
+            System.out.println("Download token expired. Cannot save files.");
+        } else {
+            SimpleFileService fs = new SimpleFileService();
+            try {
+                String textFile = fs.savePayslipAsText(cloned);
+                String pdfFile = fs.savePayslipAsPdf(cloned);
+                System.out.println("\nPayslip Download Successful.");
+                System.out.println("Saved as text file: " + textFile);
+                System.out.println("Saved as PDF file : " + pdfFile);
+            } catch (Exception e) {
+                System.out.println("Error during payslip download: " + e.getMessage());
+            }
+        }
+
+        System.out.println("\n--- Printed Payslip ---\n");
+        System.out.println(cloned.toString());
     }
 
     private static double readAmount(Scanner scanner, String prompt) {

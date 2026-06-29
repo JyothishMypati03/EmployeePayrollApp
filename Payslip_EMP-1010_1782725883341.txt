@@ -1,0 +1,5 @@
+PAYSLIP
+Employee ID : EMP-1010
+Employee Name : John David
+Month       : January 2026
+Net Pay     : 48500.0
