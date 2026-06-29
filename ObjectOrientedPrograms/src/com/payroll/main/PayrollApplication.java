@@ -4,6 +4,8 @@ import com.payroll.dao.EmployeeDAO;
 import com.payroll.daoimpl.EmployeeDAOImpl;
 import com.payroll.exception.ValidationException;
 import com.payroll.model.Employee;
+import com.payroll.model.Payslip;
+import com.payroll.model.SalaryComponents;
 import com.payroll.model.UserAccount;
 import com.payroll.validation.Validator;
 import com.payroll.auth.PasswordUtil;
@@ -19,14 +21,15 @@ public class PayrollApplication {
         EmployeeDAO employeeDAO = new EmployeeDAOImpl();
         AuthenticationService authService = new AuthenticationService(employeeDAO);
 
-        System.out.println("=== Payroll App (Register / Login) ===");
+        System.out.println("=== Payroll App (Register / Login / Payslip) ===");
 
         boolean running = true;
         while (running) {
             System.out.println("\nChoose an option:");
             System.out.println("1) Register Employee");
             System.out.println("2) Login");
-            System.out.println("3) Exit");
+            System.out.println("3) Generate Payslip");
+            System.out.println("4) Exit");
             System.out.print("Enter choice: ");
 
             String choice = scanner.nextLine().trim();
@@ -95,13 +98,72 @@ public class PayrollApplication {
                     break;
 
                 case "3":
+                    generatePayslip(scanner);
+                    break;
+
+                case "4":
                     running = false;
                     break;
 
                 default:
-                    System.out.println("Invalid option. Choose 1, 2, or 3.");
+                    System.out.println("Invalid option. Choose 1, 2, 3, or 4.");
             }
         }
+    }
 
+    private static void generatePayslip(Scanner scanner) {
+        System.out.println("PAYSLIP GENERATION\n");
+
+        System.out.print("Enter Employee ID: ");
+        String employeeId = scanner.nextLine().trim();
+
+        System.out.print("Enter Employee Name: ");
+        String employeeName = scanner.nextLine().trim();
+
+        System.out.print("Enter Month (e.g., January 2026): ");
+        String month = scanner.nextLine().trim();
+
+        System.out.println("\nSelect salary structure:");
+        System.out.println("1) Fixed Salary");
+        System.out.println("2) Contract Salary");
+        System.out.println("3) Commission Salary");
+        System.out.print("Select option: ");
+        String structureOption = scanner.nextLine().trim();
+
+        String structureName;
+        switch (structureOption) {
+            case "2":
+                structureName = "CONTRACT";
+                break;
+            case "3":
+                structureName = "COMMISSION";
+                break;
+            default:
+                structureName = "FIXED";
+        }
+
+        double basicSalary = readAmount(scanner, "Enter Basic Salary: ");
+        double hra = readAmount(scanner, "Enter HRA: ");
+        double da = readAmount(scanner, "Enter DA: ");
+        double allowances = readAmount(scanner, "Enter Allowances: ");
+
+        SalaryComponents components = new SalaryComponents(
+                structureName, basicSalary, hra, da, allowances);
+
+        Employee employee = new Employee(employeeId, employeeName, "", "", "", "", basicSalary);
+        Payslip payslip = new Payslip(employee, components, month);
+
+        System.out.println(payslip.toString());
+    }
+
+    private static double readAmount(Scanner scanner, String prompt) {
+        while (true) {
+            try {
+                System.out.print(prompt);
+                return Double.parseDouble(scanner.nextLine().trim());
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid number. Please enter a valid amount.");
+            }
+        }
     }
 }

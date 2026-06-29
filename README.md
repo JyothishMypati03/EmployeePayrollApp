@@ -1,114 +1,110 @@
-# 🔐 Employee Payroll Management System – UC2: Employee Authentication & Login
+# 💰Payslip Generation
 
 ## 📖 Overview
 
-**Use Case 2 (UC2)** implements the Employee Authentication and Login module of the Employee Payroll Management System.
+**Use Case 3 (UC3)** implements the **Payslip Generation** module of the Employee Payroll Management System.
 
-This module extends the Employee Registration use case by introducing user authentication, role-based access, password hashing, inheritance, polymorphism, abstract classes, and session management.
+This use case calculates an employee's monthly salary by combining salary components, applying statutory deductions, and generating a professional payslip. It demonstrates how object-oriented design can simplify payroll processing through reusable components and clean class relationships.
 
 ---
 
 ## 🎯 Goal
 
-Securely authenticate registered users and provide role-based dashboard access.
+Generate a detailed monthly payslip with salary components, deductions, and net payable salary.
 
 ---
 
 ## 📌 Learning Objectives
 
-- Understand Inheritance and Polymorphism.
-- Learn how Abstract Classes are used.
-- Understand Method Overriding.
-- Introduce Password Hashing.
-- Learn Session Management.
-- Understand Runtime Polymorphism.
+- Understand Composition and Aggregation.
+- Learn how multiple objects collaborate.
+- Apply Java Stream API for salary calculations.
+- Use the Fluent Interface Design Pattern.
+- Override `toString()` for formatted payslip output.
 
 ---
 
 ## 🛠 Features
 
-- Secure User Login
-- Password Hashing
-- Username & Password Authentication
-- Role-Based Login
-- Employee Dashboard
-- Manager Dashboard
-- Session Creation
-- Session Validation
-- Login Attempt Limiting
+- Generate Monthly Payslip
+- Calculate Gross Salary
+- Apply PF Deduction
+- Apply Tax Deduction
+- Calculate Net Salary
+- Support Multiple Salary Structures
+- Display Professional Payslip
+- Maintain Historical Payslip Records
 
 ---
 
 # 📚 OOP Concepts Covered
 
-## ✅ Inheritance
+## ✅ Composition
+
+A **Payslip HAS-A SalaryComponents**.
 
 ```
-            User (Abstract)
-             /         \
-            /           \
-RegularEmployee      Manager
+Payslip
+   │
+   ├── Basic Salary
+   ├── HRA
+   ├── DA
+   ├── Bonus
+   └── Allowances
 ```
-
-Both user types inherit common properties from the abstract `User` class.
 
 ---
 
-## ✅ Abstraction
+## ✅ Aggregation
 
-The `User` class defines the common structure while forcing subclasses to implement their own authentication logic.
+A **Payslip HAS-A Employee**.
+
+```
+Employee
+      ▲
+      │
+  Payslip
+```
+
+The Employee exists independently of the Payslip.
 
 ---
 
-## ✅ Polymorphism
+## ✅ Stream API
 
-Different objects (`RegularEmployee`, `Manager`) are stored using the parent `User` reference.
+Used for:
+
+- Calculating Gross Salary
+- Summing Salary Components
+- Processing Collections
+
+Example operations:
+
+- map()
+- filter()
+- reduce()
+- sum()
+
+---
+
+## ✅ Fluent Interface
+
+Supports chained method calls.
+
+Example:
 
 ```java
-User employee = new RegularEmployee(...);
-
-User manager = new Manager(...);
+Payslip payslip = new Payslip()
+        .setEmployee(employee)
+        .setMonth("June")
+        .calculateSalary();
 ```
-
-At runtime, the correct `authenticate()` method is executed.
 
 ---
 
 ## ✅ Method Overriding
 
-Each subclass provides its own implementation of:
-
-```java
-authenticate()
-```
-
----
-
-## ✅ Password Hashing
-
-Passwords are converted into hashed values before comparison.
-
-```
-Password
-    │
-    ▼
-Hash
-    │
-    ▼
-Stored Securely
-```
-
----
-
-## ✅ Session Management
-
-After successful login, a session object is created.
-
-The session stores:
-
-- Username
-- Login Time
-- Session Timeout
+Override `toString()` to generate a formatted payslip.
 
 ---
 
@@ -119,51 +115,47 @@ src/
 
 │
 ├── model
-│      User.java
-│      RegularEmployee.java
-│      Manager.java
-│      Session.java
+│      Employee.java
+│      SalaryComponent.java
+│      Payslip.java
 │
 ├── service
-│      AuthenticationService.java
-│
-├── utility
-│      PasswordUtil.java
+│      PayrollService.java
 │
 └── main
-       UseCase2LoginApp.java
+       UseCase3PayslipApp.java
 ```
 
 ---
 
-# 🔄 Authentication Flow
+# 🔄 Payslip Generation Flow
 
 ```
 Start
    │
    ▼
-Enter Username
+Select Employee
    │
    ▼
-Enter Password
+Select Month
    │
    ▼
-Hash Password
+Load Salary Components
    │
    ▼
-Authenticate User
+Calculate Gross Salary
    │
    ▼
-Identify User Role
+Apply PF & Tax
    │
    ▼
-Create Session
+Calculate Net Salary
    │
    ▼
-Display Dashboard
+Generate Payslip
    │
    ▼
-End
+Display Payslip
 ```
 
 ---
@@ -171,82 +163,70 @@ End
 # 🖥 Sample Output
 
 ```
-==== USE CASE 2: EMPLOYEE AUTHENTICATION & LOGIN ====
+=========== MONTHLY PAYSLIP ===========
 
-Enter Username : emp1
+Employee ID : EMP-1001
+Employee    : Jyothish Mypati
+Department  : IT
+Month       : June 2026
 
-Enter Password : Emp@1234
+---------------------------------------
 
-Login Successful!
+Basic Salary     : ₹50,000.00
+HRA              : ₹10,000.00
+DA               : ₹5,000.00
+Bonus            : ₹2,000.00
 
-Role : EMPLOYEE
+---------------------------------------
 
-======== DASHBOARD ========
+Gross Salary     : ₹67,000.00
 
-Employee Dashboard
+PF Deduction     : ₹3,000.00
+Tax Deduction    : ₹2,000.00
 
-View Payslip
+---------------------------------------
 
-Update Profile
+Net Salary       : ₹62,000.00
 
-Session active for user : emp1
-
-Session active and valid.
+=======================================
 ```
 
 ---
 
 # 🔑 Class Responsibilities
 
-## PasswordUtil
+## Employee
 
-- Hash passwords
-- Compare password hashes
-
----
-
-## User (Abstract)
-
-- Stores common user information
-- Defines abstract `authenticate()` method
+- Stores employee information.
 
 ---
 
-## RegularEmployee
+## SalaryComponent
 
-- Extends User
-- Implements employee authentication
-
----
-
-## Manager
-
-- Extends User
-- Implements manager authentication
+- Represents individual salary components.
+- Basic Salary
+- HRA
+- DA
+- Bonus
+- Allowances
 
 ---
 
-## Session
+## Payslip
 
-- Represents logged-in user
-- Maintains login state
-- Validates session timeout
-
----
-
-## AuthenticationService
-
-- Handles login
-- Validates credentials
-- Creates sessions
-- Displays role-based dashboard
+- Holds employee details.
+- Contains salary components.
+- Calculates gross salary.
+- Calculates deductions.
+- Calculates net salary.
+- Generates formatted payslip.
 
 ---
 
-## UseCase2LoginApp
+## PayrollService
 
-- Entry point
-- Coordinates login flow
-- Calls AuthenticationService
+- Generates payslip.
+- Applies payroll rules.
+- Calculates deductions.
+- Returns completed Payslip object.
 
----

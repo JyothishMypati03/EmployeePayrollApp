@@ -6,15 +6,7 @@ import com.payroll.model.UserAccount;
 
 import java.util.Scanner;
 
-/**
- * Simple AuthenticationService for beginners.
- * Steps:
- * 1) Ask username
- * 2) Find employee by username from the DAO
- * 3) Prompt for password up to `maxAttempts`
- * 4) Verify using `PasswordUtil.verify`
- * 5) On success, create a Session and show a role dashboard
- */
+
 public class AuthenticationService {
     private final EmployeeDAO employeeDAO;
     private final int maxAttempts = 3;
